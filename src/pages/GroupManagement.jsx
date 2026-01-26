@@ -9,53 +9,98 @@ export default function GroupManagement() {
   const [checkedAuth, setCheckedAuth] = useState(false);
 
   // Updated mock data: each groupholder has members
-  const [groups, setGroups] = useState([
-    {
-      id: 1,
-      name: "Group A",
-      groupholders: [
-        {
-          id: 1,
-          name: "John Doe",
-          members: [
-            { id: 1, name: "Alice" },
-            { id: 2, name: "Bob" },
-            { id: 3, name: "Charlie" },
-          ],
-        },
-        {
-          id: 2,
-          name: "Mary Jane",
-          members: [
-            { id: 4, name: "David" },
-            { id: 5, name: "Emma" },
-          ],
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Group B",
-      groupholders: [
-        {
-          id: 3,
-          name: "Alice Smith",
-          members: [
-            { id: 6, name: "Frank" },
-            { id: 7, name: "Grace" },
-          ],
-        },
-        {
-          id: 4,
-          name: "Bob Brown",
-          members: [
-            { id: 8, name: "Hannah" },
-            { id: 9, name: "Ian" },
-          ],
-        },
-      ],
-    },
-  ]);
+const [groups, setGroups] = useState([
+  {
+    id: 1,
+    name: "Group A",
+    groupholders: [
+      {
+        id: 1,
+        name: "John Doe",
+        members: [
+          {
+            id: 1,
+            name: "Alice",
+            savings: [
+              { id: 1, amount: 10, type: "deposit", date: "2026-01-26" }
+            ],
+          },
+          {
+            id: 2,
+            name: "Bob",
+            savings: [], // Not saved yet
+          },
+          {
+            id: 3,
+            name: "Charlie",
+            savings: [
+              { id: 2, amount: 5, type: "deposit", date: "2026-01-25" }
+            ],
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: "Mary Jane",
+        members: [
+          {
+            id: 4,
+            name: "David",
+            savings: [],
+          },
+          {
+            id: 5,
+            name: "Emma",
+            savings: [
+              { id: 3, amount: 20, type: "deposit", date: "2026-01-24" }
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: "Group B",
+    groupholders: [
+      {
+        id: 3,
+        name: "Alice Smith",
+        members: [
+          {
+            id: 6,
+            name: "Frank",
+            savings: [],
+          },
+          {
+            id: 7,
+            name: "Grace",
+            savings: [
+              { id: 4, amount: 15, type: "deposit", date: "2026-01-23" }
+            ],
+          },
+        ],
+      },
+      {
+        id: 4,
+        name: "Bob Brown",
+        members: [
+          {
+            id: 8,
+            name: "Hannah",
+            savings: [],
+          },
+          {
+            id: 9,
+            name: "Ian",
+            savings: [],
+          },
+        ],
+      },
+    ],
+  },
+]);
+
 
   useEffect(() => {
     if (!user) navigate("/login");

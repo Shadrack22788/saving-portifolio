@@ -1,26 +1,59 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Dashboard from "./pages/Dashboard.jsx";
-import GroupManagement from "./pages/GroupManagement.jsx";
-import Login from "./pages/Login.jsx"; // assuming you have a login page
-import Register from "./pages/Register.jsx"; // optional
+import { useState } from "react";
+
+import Dashboard from "./pages/Dashboard";
+import GroupManagement from "./pages/GroupManagement";
+import AgentDashboard from "./pages/AgentDashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
+  const [groups, setGroups] = useState([
+    {
+      id: 1,
+      name: "Group A",
+      groupholders: [
+        {
+          id: 1,
+          name: "John Doe",
+          members: [
+            {
+              id: 1,
+              name: "Alice",
+              savings: [
+                { id: 1, amount: 10, type: "deposit", date: "2026-01-26" },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ]);
+
   return (
+    
       <Routes>
-        {/* Default route */}
         <Route path="/" element={<Navigate to="/dashboard" />} />
 
-        {/* Dashboard */}
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={<Dashboard groups={groups} />}
+        />
 
-        {/* Group Management */}
-        <Route path="/groups" element={<GroupManagement />} />
+        <Route
+          path="/groups"
+          element={<GroupManagement groups={groups} setGroups={setGroups} />}
+        />
 
-        {/* Auth Routes */}
+        <Route
+          path="/agent"
+          element={<AgentDashboard groups={groups} />}
+        />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
-
+    
   );
 }
 
