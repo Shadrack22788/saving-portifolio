@@ -1,54 +1,78 @@
+import { useState } from "react";
+
 export default function AgentDashboard({ groups }) {
-  const today = new Date().toISOString().split("T")[0];
+  const [allGroups, setAllGroups] = useState(groups);
+  const [newMemberName, setNewMemberName] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState(allGroups[0].groupholders[0].id);
 
-  const savedToday = [];
-  const notSavedToday = [];
+  const handleAddMember = (e) => {
+    e.preventDefault();
+    if (!newMemberName) return alert("Enter member name");
 
-  groups.forEach((group) => {
-    group.members.forEach((member) => {
-      const hasSavedToday = member.savings?.some(
-        (s) => s.type === "deposit" && s.date === today
-      );
+    // Clone state
+    const updatedGroups = allGroups.map(group => ({
+      ...group,
+      groupholders: group.groupholders.map(g => {
+        if (g.id === selectedGroup) {
+          const newId = g.members.length + 1;
+          return {
+            ...g,
+            members: [...g.members, { id: newId, name: newMemberName, savings: [] }]
+          };
+        }
+        return g;
+      })
+    }));
 
-      if (hasSavedToday) {
-        savedToday.push({ ...member, groupName: group.name });
-      } else {
-        notSavedToday.push({ ...member, groupName: group.name });
-      }
-    });
-  });
+    setAllGroups(updatedGroups);
+    setNewMemberName("");
+  };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">Agent Dashboard</h1>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Agent Dashboard</h1>
 
-      {/* Saved Today */}
-      <section className="mb-6">
-        <h2 className="text-green-600 font-semibold mb-2">
-          ✅ Saved Today ({savedToday.length})
-        </h2>
+      <form onSubmit={handleAddMember} className="mb-6 flex gap-2 items-center">
+        <select
+          className="border p-2 rounded"
+          value={selectedGroup}
+          onChange={(e) => setSelectedGroup(Number(e.target.value))}
+        >
+          {allGroups.flatMap(g => g.groupholders).map(g => (
+            <option key={g.id} value={g.id}>{g.name} ({g.id})</option>
+          ))}
+        </select>
 
-        {savedToday.map((m) => (
-          <div key={m.id} className="bg-green-100 p-2 rounded mb-2">
-            <p className="font-medium">{m.name}</p>
-            <p className="text-sm text-gray-600">Group: {m.groupName}</p>
+        <input
+          type="text"
+          placeholder="New Member Name"
+          value={newMemberName}
+          onChange={(e) => setNewMemberName(e.target.value)}
+          className="border p-2 rounded"
+        />
+
+        <button type="submit" className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700">
+          Add Member
+        </button>
+      </form>
+
+      <div>
+        {allGroups.map(group => (
+          <div key={group.id} className="mb-4">
+            <h2 className="font-semibold">{group.name}</h2>
+            {group.groupholders.map(g => (
+              <div key={g.id} className="ml-4">
+                <h3 className="font-medium">{g.name}</h3>
+                <ul className="ml-4 list-disc">
+                  {g.members.map(m => (
+                    <li key={m.id}>{m.name}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         ))}
-      </section>
-
-      {/* Not Saved Today */}
-      <section>
-        <h2 className="text-red-600 font-semibold mb-2">
-          ❌ Not Saved Today ({notSavedToday.length})
-        </h2>
-
-        {notSavedToday.map((m) => (
-          <div key={m.id} className="bg-red-100 p-2 rounded mb-2">
-            <p className="font-medium">{m.name}</p>
-            <p className="text-sm text-gray-600">Group: {m.groupName}</p>
-          </div>
-        ))}
-      </section>
+      </div>
     </div>
   );
 }

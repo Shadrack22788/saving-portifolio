@@ -1,59 +1,86 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useState } from "react";
 
-import Dashboard from "./pages/Dashboard";
-import GroupManagement from "./pages/GroupManagement";
-import AgentDashboard from "./pages/AgentDashboard";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import NavBar from "./components/NavBar";
+import SideBar from "./components/SideBar";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import AgentDashboard from "./pages/AgentDashboard";
+import Profile from "./pages/Profile";
+import Savings from "./pages/Savings";
+import Reports from "./pages/Report";
 
 function App() {
-  const [groups, setGroups] = useState([
-    {
-      id: 1,
-      name: "Group A",
-      groupholders: [
-        {
-          id: 1,
-          name: "John Doe",
-          members: [
-            {
-              id: 1,
-              name: "Alice",
-              savings: [
-                { id: 1, amount: 10, type: "deposit", date: "2026-01-26" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ]);
+  const { user } = useAuth();
 
   return (
-    
-      <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" />} />
+    <>
+      {user && (
+        <>
+          <NavBar />
+          <div className="flex">
+            <SideBar />
+            <div className="flex-1 p-6">
+              <Routes>
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/agent"
+                  element={
+                    <ProtectedRoute roleRequired="agent">
+                      <AgentDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/savings"
+                  element={
+                    <ProtectedRoute roleRequired="agent">
+                      <Savings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/reports"
+                  element={
+                    <ProtectedRoute roleRequired="manager">
+                      <Reports />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<Navigate to="/dashboard" />} />
+              </Routes>
+            </div>
+          </div>
+        </>
+      )}
 
-        <Route
-          path="/dashboard"
-          element={<Dashboard groups={groups} />}
-        />
-
-        <Route
-          path="/groups"
-          element={<GroupManagement groups={groups} setGroups={setGroups} />}
-        />
-
-        <Route
-          path="/agent"
-          element={<AgentDashboard groups={groups} />}
-        />
-
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    
+      {/* Login/Register if not logged in */}
+      {!user && (
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      )}
+    </>
   );
 }
 
