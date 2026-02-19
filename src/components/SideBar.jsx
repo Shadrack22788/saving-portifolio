@@ -1,32 +1,37 @@
+// Sidebar.jsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaHome, FaPiggyBank, FaChartBar, FaUser, FaBars } from "react-icons/fa";
+import { FaHome, FaPiggyBank, FaChartBar, FaUser, FaUsers, FaFileAlt, FaBars } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth(); // get logged-in user
+  const { user } = useAuth();
 
-  // Links per role
-  const links = [
-    // Agent links
-    user?.role === "agent" && { name: "Agent Dashboard", path: "/agent", icon: <FaHome /> },
-    user?.role === "agent" && { name: "Savings", path: "/savings", icon: <FaPiggyBank /> },
+  const roleLinks = {
+    agent: [
+      { name: "Agent Dashboard", path: "/agent", icon: <FaHome /> },
+      { name: "Savings", path: "/savings", icon: <FaPiggyBank /> },
+      { name: "Members", path: "/members", icon: <FaUsers /> }, // ✅ For agents
+      { name: "Profile", path: "/profile", icon: <FaUser /> },
+    ],
+    manager: [
+      { name: "Manager Dashboard", path: "/dashboard", icon: <FaHome /> },
+      { name: "Reports", path: "/reports", icon: <FaChartBar /> },
+      { name: "Agents", path: "/agents", icon: <FaUsers /> }, // ✅ For managers
+      { name: "Profile", path: "/profile", icon: <FaUser /> },
+    ],
+    member: [
+      { name: "Member Dashboard", path: "/member", icon: <FaHome /> },
+      { name: "Profile", path: "/profile", icon: <FaUser /> },
+    ],
+  };
 
-    // Manager links
-    user?.role === "manager" && { name: "Manager Dashboard", path: "/dashboard", icon: <FaHome /> },
-    user?.role === "manager" && { name: "Reports", path: "/reports", icon: <FaChartBar /> },
-
-    // Member links
-    user?.role === "member" && { name: "Member Dashboard", path: "/member", icon: <FaHome /> },
-
-    // Common link for all roles
-    { name: "Profile", path: "/profile", icon: <FaUser /> },
-  ].filter(Boolean); // remove nulls
+  const links = user ? roleLinks[user.role] || [] : [];
 
   return (
     <>
-      {/* Mobile Toggle Button */}
+      {/* Mobile toggle */}
       <div className="md:hidden p-4">
         <button onClick={() => setIsOpen(!isOpen)}>
           <FaBars size={24} />
@@ -42,7 +47,6 @@ export default function SideBar() {
         <div className="p-6 text-2xl font-bold border-b border-blue-400">
           Saving App
         </div>
-
         <ul className="p-4 space-y-4">
           {links.map((link, idx) => (
             <li key={idx}>

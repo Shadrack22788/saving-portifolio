@@ -1,10 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
+
 import logo from "../assets/Logo.png"; // import your logo
 
 export default function NavBar() {
-  const { user, logout } = useContext(AuthContext);
+ const { user, logout } = useAuth();
   const location = useLocation();
 
   const linkClass = (path) =>

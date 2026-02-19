@@ -1,36 +1,36 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
-const AuthContext = createContext();
+export const AuthContext = createContext(); // ✅ Export it here
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  // Load user from localStorage on refresh
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const savedUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (savedUser) {
+      setUser(savedUser);
     }
   }, []);
 
-  // Login function
-  const login = (userData) => {
-    const formattedUser = {
-      id: userData.id || Date.now(),
-      name: userData.name || "User",
-      email: userData.email || "",
-      role: userData.role || "member", // default role
-      createdAt: new Date().toISOString(),
-    };
+  const login = (email, password) => {
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
 
-    setUser(formattedUser);
-    localStorage.setItem("user", JSON.stringify(formattedUser));
+    const foundUser = storedUsers.find(
+      (u) => u.email === email && u.password === password
+    );
+
+    if (foundUser) {
+      localStorage.setItem("currentUser", JSON.stringify(foundUser));
+      setUser(foundUser);
+      return foundUser;
+    }
+
+    return null;
   };
 
-  // Logout function
   const logout = () => {
+    localStorage.removeItem("currentUser");
     setUser(null);
-    localStorage.removeItem("user");
   };
 
   return (
@@ -40,5 +40,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export { AuthContext };
+// Custom Hook
 export const useAuth = () => useContext(AuthContext);

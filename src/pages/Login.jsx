@@ -1,62 +1,78 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [role, setRole] = useState("");
-  const [name, setName] = useState("");
 
-  const handleLogin = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!name || !role) return alert("Enter name and role");
-
-    // Call login with proper user object
-    login({
-      id: Date.now(), // simple unique id
-      name,
-      role,
-    });
-
-    if (role === "agent") {
-      navigate("/agent");
-    } else if (role === "manager") {
-      navigate("/dashboard"); // manager dashboard
-    } else if (role === "member") {
-      navigate("/member"); // create member dashboard route
-    } else {
-      navigate("/dashboard"); // fallback
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
     }
 
+    // Call login from AuthContext
+    const user = login(email, password);
+
+    if (!user) {
+      alert("Invalid credentials");
+      return;
+    }
+
+    // Redirect based on role
+    if (user.role === "agent") {
+      navigate("/agent");
+    } else if (user.role === "manager") {
+      navigate("/dashboard");
+    } else if (user.role === "member") {
+      navigate("/member");
+    }
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Login</h1>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded shadow w-96"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
-      <form onSubmit={handleLogin} className="space-y-4">
         <input
-          type="text"
-          placeholder="Your Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="border p-2 w-full rounded"
+          type="email"
+          placeholder="Enter Email"
+          className="w-full p-2 mb-4 border rounded"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
-        <select
-          className="border p-2 w-full rounded"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-        >
-          <option value="">Select Role</option>
-          <option value="agent">Agent</option>
-          <option value="manager">Manager</option>
-          <option value="member">Member</option>
-        </select>
+        <input
+          type="password"
+          placeholder="Enter Password"
+          className="w-full p-2 mb-2 border rounded"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-        <button className="bg-blue-600 text-white px-4 py-2 rounded w-full">
+        {/* Forgot Password */}
+        <div className="text-right mb-4">
+          <button
+            type="button"
+            onClick={() => navigate("/forgot-password")}
+            className="text-blue-600 text-sm hover:underline"
+          >
+            Forgot Password?
+          </button>
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+        >
           Login
         </button>
       </form>
