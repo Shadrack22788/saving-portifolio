@@ -1,9 +1,28 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaHome, FaPiggyBank, FaChartBar, FaUser, FaBars } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth(); // get logged-in user
+
+  // Links per role
+  const links = [
+    // Agent links
+    user?.role === "agent" && { name: "Agent Dashboard", path: "/agent", icon: <FaHome /> },
+    user?.role === "agent" && { name: "Savings", path: "/savings", icon: <FaPiggyBank /> },
+
+    // Manager links
+    user?.role === "manager" && { name: "Manager Dashboard", path: "/dashboard", icon: <FaHome /> },
+    user?.role === "manager" && { name: "Reports", path: "/reports", icon: <FaChartBar /> },
+
+    // Member links
+    user?.role === "member" && { name: "Member Dashboard", path: "/member", icon: <FaHome /> },
+
+    // Common link for all roles
+    { name: "Profile", path: "/profile", icon: <FaUser /> },
+  ].filter(Boolean); // remove nulls
 
   return (
     <>
@@ -25,29 +44,16 @@ export default function SideBar() {
         </div>
 
         <ul className="p-4 space-y-4">
-          <li>
-            <Link to="/dashboard" className="flex items-center gap-3 hover:bg-blue-500 p-2 rounded">
-              <FaHome /> Dashboard
-            </Link>
-          </li>
-
-          <li>
-            <Link to="/savings" className="flex items-center gap-3 hover:bg-blue-500 p-2 rounded">
-              <FaPiggyBank /> Savings
-            </Link>
-          </li>
-
-          <li>
-            <Link to="/reports" className="flex items-center gap-3 hover:bg-blue-500 p-2 rounded">
-              <FaChartBar /> Reports
-            </Link>
-          </li>
-
-          <li>
-            <Link to="/profile" className="flex items-center gap-3 hover:bg-blue-500 p-2 rounded">
-              <FaUser /> Profile
-            </Link>
-          </li>
+          {links.map((link, idx) => (
+            <li key={idx}>
+              <Link
+                to={link.path}
+                className="flex items-center gap-3 hover:bg-blue-500 p-2 rounded"
+              >
+                {link.icon} {link.name}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </>
