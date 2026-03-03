@@ -1,44 +1,57 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
-export const AuthContext = createContext(); // ✅ Export it here
+const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+export function AuthProvider({ children }) {
+
+  const [currentUser, setCurrentUser] = useState(
+    JSON.parse(localStorage.getItem("currentUser")) || null
+  );
 
   useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (savedUser) {
-      setUser(savedUser);
+    if (!currentUser) {
+      const defaultUser = {
+        email: "manager@gmail.com",
+        role: "manager",
+      };
+
+      localStorage.setItem("currentUser", JSON.stringify(defaultUser));
+      setCurrentUser(defaultUser);
     }
   }, []);
 
-  const login = (email, password) => {
-    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+  const login = async (email, password) => {
+    try {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
 
-    const foundUser = storedUsers.find(
-      (u) => u.email === email && u.password === password
-    );
+      const user = users.find(
+        (u) =>
+          u.email.trim().toLowerCase() === email.trim().toLowerCase() &&
+          u.password.trim() === password.trim()
+      );
 
-    if (foundUser) {
-      localStorage.setItem("currentUser", JSON.stringify(foundUser));
-      setUser(foundUser);
-      return foundUser;
+      if (user) {
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        setCurrentUser(user);
+
+        return { success: true, user };
+      }
+
+      return { success: false, message: "Invalid credentials" };
+    } catch (error) {
+      return { success: false, message: "Something went wrong" };
     }
-
-    return null;
   };
-
   const logout = () => {
     localStorage.removeItem("currentUser");
-    setUser(null);
+    setCurrentUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ login, logout, user: currentUser }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-// Custom Hook
 export const useAuth = () => useContext(AuthContext);

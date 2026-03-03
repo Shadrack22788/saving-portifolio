@@ -8,12 +8,10 @@ export const MemberProvider = ({ children }) => {
     return stored ? JSON.parse(stored) : [];
   });
 
-  // Save to localStorage whenever members change
   useEffect(() => {
     localStorage.setItem("members", JSON.stringify(members));
   }, [members]);
 
-  // Add new member
   const addMember = (memberData, agentId) => {
     const newMember = {
       id: Date.now(),
@@ -26,7 +24,6 @@ export const MemberProvider = ({ children }) => {
     setMembers((prev) => [...prev, newMember]);
   };
 
-  // Get members for specific agent
   const getAgentMembers = (agentId) => {
     return members.filter((member) => member.agentId === agentId);
   };

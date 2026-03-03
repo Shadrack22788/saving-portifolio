@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 export default function Profile() {
-  // Sample user data
   const [user, setUser] = useState({
     name: "Alice",
     email: "alice@example.com",
@@ -16,7 +15,6 @@ export default function Profile() {
     <div>
       <h1 className="text-2xl font-bold mb-6">Profile</h1>
 
-      {/* User Info */}
       <div className="bg-white p-6 rounded shadow mb-6">
         <h2 className="text-xl font-semibold mb-4">User Information</h2>
         <p><span className="font-medium">Name:</span> {user.name}</p>
@@ -24,7 +22,6 @@ export default function Profile() {
         <p><span className="font-medium">Role:</span> {user.role}</p>
       </div>
 
-      {/* Financial Summary */}
       <div className="grid md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white p-6 rounded shadow">
           <h2>Total Deposits</h2>
@@ -42,7 +39,6 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Update Profile Form */}
       <div className="bg-white p-6 rounded shadow">
         <h2 className="text-xl font-semibold mb-4">Update Profile</h2>
         <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>

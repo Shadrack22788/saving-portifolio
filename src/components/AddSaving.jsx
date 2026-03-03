@@ -3,24 +3,22 @@ import { useState } from "react";
 export default function AddSaving({ onAdd }) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [type, setType] = useState("deposit"); // deposit or withdrawal
+  const [type, setType] = useState("deposit");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title || !amount) return;
 
     const newSaving = {
-      id: Date.now(), // unique ID
+      id: Date.now(),
       title,
       amount: parseFloat(amount),
       type,
       date: new Date().toLocaleDateString(),
     };
 
-    // Call parent handler
     onAdd(newSaving);
 
-    // Reset form
     setTitle("");
     setAmount("");
     setType("deposit");

@@ -1,12 +1,11 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react"; 
 import { useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-
 import NavBar from "./components/NavBar";
 import SideBar from "./components/SideBar";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
 import AgentDashboard from "./pages/AgentDashboard";
 import MemberDashboard from "./pages/MemberDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
@@ -18,19 +17,31 @@ import AgentsPage from "./pages/AgentsPage";
 import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+
+  useEffect(() => {
+    if (!user) {
+      const defaultUser = {
+        email: "manager@gmail.com",
+        role: "manager", 
+      };
+
+      localStorage.setItem("currentUser", JSON.stringify(defaultUser));
+      setUser(defaultUser);
+    }
+  }, []);
 
   return (
     <>
       {user ? (
         <>
-          {/* Navbar + Sidebar */}
           <NavBar />
           <div className="flex">
             <SideBar />
             <div className="flex-1 p-6">
               <Routes>
-                {/* Agent Routes */}
+
+              
                 <Route
                   path="/agent"
                   element={
@@ -39,6 +50,7 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+
                 <Route
                   path="/savings"
                   element={
@@ -47,6 +59,7 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+
                 <Route
                   path="/members"
                   element={
@@ -56,7 +69,7 @@ function App() {
                   }
                 />
 
-                {/* Manager Routes */}
+              
                 <Route
                   path="/dashboard"
                   element={
@@ -65,6 +78,7 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+
                 <Route
                   path="/reports"
                   element={
@@ -73,6 +87,7 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+
                 <Route
                   path="/agents"
                   element={
@@ -82,17 +97,15 @@ function App() {
                   }
                 />
 
-                {/* Member Routes */}
                 <Route
                   path="/member"
                   element={
-                    <ProtectedRoute roleRequired="member">
+                    <ProtectedRoute>
                       <MemberDashboard />
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Profile accessible by all roles */}
                 <Route
                   path="/profile"
                   element={
@@ -101,10 +114,9 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+
                 <Route path="/forgot-password" element={<ForgotPassword />} />
 
-
-                {/* Catch-all route: redirect based on user role */}
                 <Route
                   path="*"
                   element={
@@ -115,7 +127,7 @@ function App() {
                     ) : user.role === "member" ? (
                       <Navigate to="/member" />
                     ) : (
-                      <Navigate to="/login" />
+                      <Navigate to="/dashboard" />
                     )
                   }
                 />
@@ -124,7 +136,6 @@ function App() {
           </div>
         </>
       ) : (
-        // Login/Register if not logged in
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

@@ -1,32 +1,62 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-export default function Register() {
-  const { login } = useContext(AuthContext);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+function Register() {
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    role: "agent",
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Simulate register + auto-login
-    const newUser = { name, email, token: "123abc" };
-    login(newUser);
+    const result = register(formData);
+
+    if (result.success) {
+      alert("Registered successfully!");
+      navigate("/login");
+    } else {
+      alert(result.message);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <form className="bg-white p-8 rounded shadow-md w-96" onSubmit={handleSubmit}>
-        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
-        <input type="text" placeholder="Name" className="w-full p-2 mb-4 border rounded"
-          value={name} onChange={(e) => setName(e.target.value)} required />
-        <input type="email" placeholder="Email" className="w-full p-2 mb-4 border rounded"
-          value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" className="w-full p-2 mb-4 border rounded"
-          value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button className="w-full bg-green-600 text-white py-2 rounded">Register</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="email"
+        placeholder="Enter email"
+        required
+        onChange={(e) =>
+          setFormData({ ...formData, email: e.target.value })
+        }
+      />
+
+      <input
+        type="password"
+        placeholder="Enter password"
+        required
+        onChange={(e) =>
+          setFormData({ ...formData, password: e.target.value })
+        }
+      />
+
+      <select
+        onChange={(e) =>
+          setFormData({ ...formData, role: e.target.value })
+        }
+      >
+        <option value="agent">Agent</option>
+        <option value="manager">Manager</option>
+      </select>
+
+      <button type="submit">Register</button>
+    </form>
   );
 }
+
+export default Register;

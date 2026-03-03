@@ -1,81 +1,66 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
-export default function Login() {
+function Login() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-  const { login } = useAuth();
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
 
-    if (!email || !password) {
-      alert("Please enter email and password");
-      return;
-    }
+    const fakeUsers = [
+      { email: "manager@gmail.com", password: "1234", role: "manager" },
+      { email: "agent@gmail.com", password: "1234", role: "agent" },
+    ];
 
-    // Call login from AuthContext
-    const user = login(email, password);
+    const user = fakeUsers.find(
+      (u) => u.email === email && u.password === password
+    );
 
     if (!user) {
-      alert("Invalid credentials");
+      setError("Invalid email or password");
       return;
     }
 
-    // Redirect based on role
-    if (user.role === "agent") {
-      navigate("/agent");
-    } else if (user.role === "manager") {
-      navigate("/dashboard");
-    } else if (user.role === "member") {
-      navigate("/member");
+    localStorage.setItem("currentUser", JSON.stringify(user));
+
+
+    if (user.role === "manager") {
+      navigate("/manager-dashboard");
+    } else {
+      navigate("/agent-dashboard");
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded shadow w-96"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+    <form onSubmit={handleSubmit}>
+      <h2>Login</h2>
 
-        <input
-          type="email"
-          placeholder="Enter Email"
-          className="w-full p-2 mb-4 border rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <input
-          type="password"
-          placeholder="Enter Password"
-          className="w-full p-2 mb-2 border rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+      <input
+        type="email"
+        placeholder="Enter email"
+        required
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
 
-        {/* Forgot Password */}
-        <div className="text-right mb-4">
-          <button
-            type="button"
-            onClick={() => navigate("/forgot-password")}
-            className="text-blue-600 text-sm hover:underline"
-          >
-            Forgot Password?
-          </button>
-        </div>
+      <input
+        type="password"
+        placeholder="Enter password"
+        required
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Login
-        </button>
-      </form>
-    </div>
+      <button type="submit">Login</button>
+    </form>
   );
 }
+
+export default Login;

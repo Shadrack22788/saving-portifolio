@@ -21,7 +21,6 @@ export default function AgentsPage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Agents Management</h1>
 
-      {/* Add Agent Form (Manager only) */}
       {user.role === "manager" && (
         <form onSubmit={handleAddAgent} className="mb-6 flex gap-2 items-center">
           <input
@@ -40,13 +39,11 @@ export default function AgentsPage() {
         </form>
       )}
 
-      {/* Agents List */}
       <div>
         {agents.map((a) => (
           <div key={a.id} className="mb-2 p-2 border rounded flex justify-between items-center">
             <span>{a.name} (Role: {a.role})</span>
 
-            {/* Manager can remove */}
             {user.role === "manager" && (
               <button
                 onClick={() => setAgents(agents.filter((ag) => ag.id !== a.id))}

@@ -3,12 +3,11 @@ import { useMembers } from "../context/MemberContext";
 import { useAuth } from "../context/AuthContext";
 
 export default function AgentDashboard() {
-  const { user } = useAuth(); // current agent
+  const { user } = useAuth();
   const { addMember, getAgentMembers } = useMembers();
 
   const [newMemberName, setNewMemberName] = useState("");
 
-  // Get members only for this agent
   const members = getAgentMembers(user.id);
 
   const handleAddMember = (e) => {
@@ -16,8 +15,8 @@ export default function AgentDashboard() {
     if (!newMemberName.trim()) return alert("Enter member name");
 
     addMember(
-      { name: newMemberName }, // member data
-      user.id // agentId
+      { name: newMemberName },
+      user.id
     );
 
     setNewMemberName("");
@@ -27,7 +26,6 @@ export default function AgentDashboard() {
     <div>
       <h1 className="text-2xl font-bold mb-6">Agent Dashboard</h1>
 
-      {/* Add Member Form */}
       <form
         onSubmit={handleAddMember}
         className="mb-6 flex gap-2 items-center"
@@ -47,7 +45,6 @@ export default function AgentDashboard() {
         </button>
       </form>
 
-      {/* Members List */}
       <div>
         <h2 className="text-xl font-semibold mb-2">My Members</h2>
         {members.length === 0 ? (

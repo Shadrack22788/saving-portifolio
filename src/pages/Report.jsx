@@ -19,7 +19,6 @@ export default function Reports() {
     <div>
       <h1 className="text-2xl font-bold mb-6">Financial Report</h1>
 
-      {/* Summary */}
       <div className="grid md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white p-6 rounded shadow">
           <h2>Total Deposits</h2>
@@ -37,7 +36,7 @@ export default function Reports() {
         </div>
       </div>
 
-      {/* Transactions Table */}
+    
       <div className="bg-white p-6 rounded shadow">
         <h2 className="font-bold mb-4">Transaction History</h2>
 

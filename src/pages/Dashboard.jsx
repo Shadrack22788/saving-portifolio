@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import StatsCard from "../components/StatsCard";
 import RecentTransactions from "../components/RecentTransactions";
@@ -40,7 +39,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* Stats Overview */}
+      
       <div className="flex flex-wrap gap-4 mb-6">
         <StatsCard title="Total Savings" value={`$${totalSavings}`} color="bg-green-500" />
         <StatsCard title="Total Members" value={totalMembers} color="bg-blue-500" />
@@ -56,7 +55,7 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      {/* Recent Transactions */}
+    
       <RecentTransactions transactions={transactions} />
     </div>
   );

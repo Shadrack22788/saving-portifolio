@@ -21,7 +21,6 @@ export default function MembersPage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Members Management</h1>
 
-      {/* Add Member Form */}
       {user.role === "agent" && (
         <form onSubmit={handleAddMember} className="mb-6 flex gap-2 items-center">
           <input
@@ -39,14 +38,11 @@ export default function MembersPage() {
           </button>
         </form>
       )}
-
-      {/* Members List */}
       <div>
         {members.map((m) => (
           <div key={m.id} className="mb-2 p-2 border rounded flex justify-between items-center">
             <span>{m.name} (Savings: {m.savings.length})</span>
 
-            {/* Agents cannot remove */}
             {user.role === "manager" && (
               <button
                 onClick={() => setMembers(members.filter((mem) => mem.id !== m.id))}

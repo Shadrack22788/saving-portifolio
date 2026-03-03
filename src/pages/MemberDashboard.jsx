@@ -1,4 +1,4 @@
-// src/pages/MemberDashboard.jsx
+
 
 import { useAuth } from "../context/AuthContext";
 
@@ -22,7 +22,7 @@ export default function MemberDashboard() {
       <div className="mt-6 bg-white shadow rounded p-4">
         <h2 className="text-xl font-semibold mb-2">My Savings</h2>
         <p>You don’t have any savings yet.</p>
-        {/* Later we can fetch and display actual savings */}
+        
       </div>
 
       <div className="mt-6 bg-white shadow rounded p-4">
